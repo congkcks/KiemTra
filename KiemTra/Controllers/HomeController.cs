@@ -179,6 +179,10 @@ namespace KiemTra.Controllers
             {
                 return NotFound();
             }
+            var provinces = employee.DiaChi;
+            var districts = employee.QueQuan;
+            ViewBag.Provinces = provinces;
+            ViewBag.Districts = districts;
             return View(employee);
         }
         [HttpPost]
