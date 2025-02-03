@@ -1,0 +1,29 @@
+﻿@model KiemTra.Models.User
+@{
+    ViewData["Title"] = "Đăng Nhập";
+}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <form method="post" asp-action="Index" class="w-100" style="max-width: 400px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+
+        <!-- Tiêu đề đăng nhập -->
+        <h2 class="text-center mb-3">@ViewData["Title"]</h2> <!-- Đã thêm margin-bottom để giảm khoảng cách -->
+
+        <div class="form-group">
+            <label for="Username" style="margin-bottom:10px">Tên Đăng Nhập</label>
+            <input asp-for="Username" type="text" class="form-control" id="Username" name="Username" required/>
+        </div>
+        <div class="form-group">
+            <label for="Password">Mật Khẩu</label>
+            <input asp-for="Password" type="password" class="form-control" id="Password" name="Password" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100" style="margin-top:10px">Đăng Nhập</button>
+
+        @if (ViewData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger mt-2">
+                @ViewData["ErrorMessage"]
+            </div>
+        }
+    </form>
+</div>

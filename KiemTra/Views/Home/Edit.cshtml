@@ -1,0 +1,170 @@
+﻿@model KiemTra.Models.NhanVien
+@{
+    ViewData["Title"] = "Sửa Nhân Viên";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Sửa Nhân Viên</h2>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="MaNhanVien" />
+        <div class="form-group">
+            <label asp-for="HoTen">Họ và Tên</label>
+            <input asp-for="HoTen" class="form-control" placeholder="Nhập họ và tên" required />
+            <span asp-validation-for="HoTen" class="text-danger"></span>
+        </div>
+
+        <!-- Quê Quán (Tỉnh Thành) -->
+        <div class="form-group">
+            <label asp-for="DiaChi">Địa Chỉ</label>
+            <select asp-for="DiaChi" class="form-control" required>
+                <option value="">Chọn Quận/Huyện</option>
+                <!-- Các option sẽ được thêm vào bằng AJAX -->
+            </select>
+            <span asp-validation-for="DiaChi" class="text-danger"></span>
+        </div>
+
+        <!-- Quê Quán (Tỉnh Thành) -->
+        <div class="form-group">
+            <label asp-for="QueQuan">Tỉnh</label>
+            <select asp-for="QueQuan" class="form-control" required>
+                <option value="">Chọn Tỉnh Thành</option>
+                <!-- Các option sẽ được thêm vào bằng AJAX -->
+            </select>
+            <span asp-validation-for="QueQuan" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="NgayBatDau">Ngày Bắt Đầu</label>
+            <input asp-for="NgayBatDau" type="date" class="form-control" required />
+            <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="NgayKetThuc">Ngày Kết Thúc</label>
+            <input asp-for="NgayKetThuc" type="date" class="form-control" />
+            <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+        </div>
+
+        <!-- Chức Vụ (ComboBox từ DanhMucCapBac) -->
+        <div class="form-group">
+            <label asp-for="ChucVu">Chức Vụ</label>
+            <select asp-for="ChucVu" class="form-control" required>
+                <option value="">Chọn Chức Vụ</option>
+                <!-- Các option sẽ được thêm vào bằng AJAX -->
+            </select>
+            <span asp-validation-for="ChucVu" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="TrangThai">Trạng Thái</label>
+            <select asp-for="TrangThai" class="form-control" required>
+                <option value="">Chọn Trạng Thái</option>
+                <option value="Dang Lam Viec">Đang Làm Việc</option>
+                <option value="Da Nghi Viec">Đã Nghỉ Việc</option>
+            </select>
+            <span asp-validation-for="TrangThai" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top:10px">Sửa Thông Tin</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Gửi yêu cầu AJAX đến API để lấy danh sách tỉnh thành
+            $.ajax({
+                url: '/1234',  // Đảm bảo URL này trùng với phương thức trong Controller
+                type: 'GET',  // Phương thức HTTP là GET
+                dataType: 'json',  // Dữ liệu trả về dạng JSON
+                success: function (data) {
+                    if (data.length === 0) {
+                        console.log('Không có tỉnh thành nào được trả về.');
+                        return;
+                    }
+
+                    // Lấy dropdown Tỉnh thành từ trang HTML
+                    var provinceSelect = $('#QueQuan');
+                    provinceSelect.empty();  // Xóa các option cũ trong dropdown
+
+                    // Duyệt qua dữ liệu tỉnh thành và thêm vào dropdown
+                    $.each(data, function (index, province) {
+                        provinceSelect.append(
+                            $('<option>', {
+                                value: province.name,  // Giá trị của option là mã tỉnh
+                                text: province.name    // Nội dung của option là tên tỉnh
+                            })
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Lỗi khi lấy dữ liệu tỉnh thành:', error);
+                }
+            });
+
+            // Gửi yêu cầu AJAX để lấy danh sách chức vụ từ API
+            $.ajax({
+                url: '/api/capbac',  // Đảm bảo URL này trùng với phương thức trong Controller
+                type: 'GET',  // Phương thức HTTP là GET
+                dataType: 'json',  // Dữ liệu trả về dạng JSON
+                success: function (data) {
+                    if (data.length === 0) {
+                        console.log('Không có chức vụ nào được trả về.');
+                        return;
+                    }
+
+                    // Lấy dropdown Chức Vụ từ trang HTML
+                    var chucVuSelect = $('#ChucVu');
+                    chucVuSelect.empty();  // Xóa các option cũ trong dropdown
+
+                    // Duyệt qua dữ liệu Chức Vụ và thêm vào dropdown
+                    $.each(data, function (index, capBac) {
+                        chucVuSelect.append(
+                            $('<option>', {
+                                value: capBac.tenCapBac,  // Giá trị của option là mã chức vụ
+                                text: capBac.tenCapBac    // Nội dung của option là tên chức vụ
+                            })
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Lỗi khi lấy dữ liệu chức vụ:', error);
+                }
+            });
+
+            // Cập nhật quận khi tỉnh thay đổi
+            $('#QueQuan').change(function () {
+                var provinceName = $(this).val(); // Lấy tên tỉnh thành (ví dụ: "Hà Nội")
+
+                if (!provinceName) return; // Nếu không chọn tỉnh thành thì không gọi API
+
+                $.ajax({
+                    url: '/12345/' + encodeURIComponent(provinceName),  // Gọi API lấy quận theo tên tỉnh
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        var districtSelect = $('#DiaChi');  // Lấy dropdown quận
+                        districtSelect.empty();  // Xóa các option cũ
+
+                        // Thêm các quận vào dropdown
+                        districtSelect.append('<option value="">Chọn Quận</option>');
+                        $.each(data, function (index, district) {
+                            districtSelect.append(
+                                $('<option>', {
+                                    value: district.name,  // Giá trị của option là mã quận
+                                    text: district.name    // Nội dung của option là tên quận
+                                })
+                            );
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Lỗi khi lấy dữ liệu quận:', error);
+                    }
+                });
+            });
+        });
+    </script>
+}

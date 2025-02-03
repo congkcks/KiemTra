@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Danh sách thao tác sửa";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+@model IEnumerable<KiemTra.Models.ThaoTacSua>
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên người dùng</th>
+            <th>Loại thao tác</th>
+            <th>Ngày thao tác</th>
+            <th>Chi tiết thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.MaThaoTac</td>
+                <td>@item.username</td>
+                <td>@item.LoaiThaoTac</td>
+                <td>@item.NgayThaoTac.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                <td>@item.ChiTietThaoTac</td>
+            </tr>
+        }
+    </tbody>
+</table>

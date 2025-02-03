@@ -1,0 +1,157 @@
+﻿@model KiemTra.Models.NhanVien
+@{
+    ViewData["Title"] = "Thêm Nhân Viên";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Thêm Nhân Viên</h2>
+
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label for="HoTen">Họ và Tên</label>
+            <input type="text" class="form-control" id="HoTen" name="HoTen" placeholder="Nhập họ và tên" required />
+        </div>
+        <!-- Quê Quán (Tỉnh Thành) -->
+        <div class="form-group">
+            <label for="DiaChi">Địa Chỉ</label>
+            <select class="form-control" id="DiaChi" name="DiaChi" required>
+                <option value="">Chọn Quận/Huyện</option>
+            </select>
+        </div>
+        <!-- Quê Quán (Tỉnh Thành) -->
+        <div class="form-group">
+            <label for="QueQuan">Tỉnh</label>
+            <select class="form-control" id="QueQuan" name="QueQuan" required>
+                <option value="">Chọn Tỉnh Thành</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="NgayBatDau">Ngày Bắt Đầu</label>
+            <input type="date" class="form-control" id="NgayBatDau" name="NgayBatDau" required />
+        </div>
+
+        <div class="form-group">
+            <label for="NgayKetThuc">Ngày Kết Thúc</label>
+            <input type="date" class="form-control" id="NgayKetThuc" name="NgayKetThuc" />
+        </div>
+
+        <!-- Chức Vụ (ComboBox từ DanhMucCapBac) -->
+        <div class="form-group">
+            <label for="ChucVu">Chức Vụ</label>
+            <select class="form-control" id="ChucVu" name="ChucVu" required>
+                <option value="">Chọn Chức Vụ</option>
+                <!-- Các option sẽ được thêm vào bằng AJAX -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="TrangThai">Trạng Thái</label>
+            <select class="form-control" id="TrangThai" name="TrangThai" required>
+                <option value="">Chọn Trạng Thái</option>
+                <option value="Dang Lam Viec">Đang Làm Việc</option>
+                <option value="Da Nghi Viec">Đã Nghỉ Việc</option>
+                <!-- Các option sẽ được thêm vào bằng AJAX -->
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top:10px">Lưu Thông Tin</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Gửi yêu cầu AJAX đến API để lấy danh sách tỉnh thành
+            $.ajax({
+                url: '/1234',  // Đảm bảo URL này trùng với phương thức trong Controller
+                type: 'GET',  // Phương thức HTTP là GET
+                dataType: 'json',  // Dữ liệu trả về dạng JSON
+                success: function (data) {
+                    if (data.length === 0) {
+                        console.log('Không có tỉnh thành nào được trả về.');
+                        return;
+                    }
+
+                    // Lấy dropdown Tỉnh thành từ trang HTML
+                    var provinceSelect = $('#QueQuan');
+                    provinceSelect.empty();  // Xóa các option cũ trong dropdown
+
+                    // Duyệt qua dữ liệu tỉnh thành và thêm vào dropdown
+                    $.each(data, function (index, province) {
+                        provinceSelect.append(
+                            $('<option>', {
+                                value: province.name,  // Giá trị của option là mã tỉnh
+                                text: province.name    // Nội dung của option là tên tỉnh
+                            })
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Lỗi khi lấy dữ liệu tỉnh thành:', error);
+                }
+            });
+
+            // Gửi yêu cầu AJAX để lấy danh sách chức vụ từ API
+            $.ajax({
+                url: '/api/capbac',  // Đảm bảo URL này trùng với phương thức trong Controller
+                type: 'GET',  // Phương thức HTTP là GET
+                dataType: 'json',  // Dữ liệu trả về dạng JSON
+                success: function (data) {
+                    if (data.length === 0) {
+                        console.log('Không có chức vụ nào được trả về.');
+                        return;
+                    }
+
+                    // Lấy dropdown Chức Vụ từ trang HTML
+                    var chucVuSelect = $('#ChucVu');
+                    chucVuSelect.empty();  // Xóa các option cũ trong dropdown
+
+                    // Duyệt qua dữ liệu Chức Vụ và thêm vào dropdown
+                    $.each(data, function (index, capBac) {
+                        chucVuSelect.append(
+                            $('<option>', {
+                                value: capBac.tenCapBac,  // Giá trị của option là mã chức vụ
+                                text: capBac.tenCapBac    // Nội dung của option là tên chức vụ
+                            })
+                        );
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Lỗi khi lấy dữ liệu chức vụ:', error);
+                }
+            });
+            $('#QueQuan').change(function () {
+                var provinceName = $(this).val(); // Lấy tên tỉnh thành (ví dụ: "Hà Nội")
+
+                if (!provinceName) return; // Nếu không chọn tỉnh thành thì không gọi API
+
+                $.ajax({
+                    url: '/12345/' + encodeURIComponent(provinceName),  // Gọi API lấy quận theo tên tỉnh
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        var districtSelect = $('#DiaChi');  // Lấy dropdown quận
+                        districtSelect.empty();  // Xóa các option cũ
+
+                        // Thêm các quận vào dropdown
+                        districtSelect.append('<option value="">Chọn Quận</option>');
+                        $.each(data, function (index, district) {
+                            districtSelect.append(
+                                $('<option>', {
+                                    value: district.name,  // Giá trị của option là mã quận
+                                    text: district.name    // Nội dung của option là tên quận
+                                })
+                            );
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Lỗi khi lấy dữ liệu quận:', error);
+                    }
+                });
+            });
+        });
+    </script>
+}

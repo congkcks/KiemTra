@@ -1,0 +1,36 @@
+﻿@model IEnumerable<KiemTra.Models.VanBang>
+
+@{
+    ViewData["Title"] = "Văn Bằng";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tên Văn Bằng</th>
+                <th>Nhân Viên</th>
+                <th>Nơi Cấp</th>
+                <th>Năm Cấp</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.TenVanBang</td>
+                    <td>@item.MaNhanVienNavigation.HoTen</td>
+                    <td>@item.NoiCap</td>
+                    <td>@item.NamCap</td>
+                    <td>
+                        <a href="@Url.Action("SuaVanBang", new { id = item.MaVanBang })" class="btn btn-primary">Sửa</a>
+                        <a href="@Url.Action("XoaVanBang", new { id = item.MaVanBang })" class="btn btn-danger">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a href="@Url.Action("ThemVanBang")" class="btn btn-primary">Thêm Văn Bằng</a>
+</div>
